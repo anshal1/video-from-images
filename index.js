@@ -58,25 +58,23 @@ function createVideoFromImages(imagePattern, outputPath, fps = 25) {
   });
 }
 // Note make sure to save the file with name image1.type, image2.type... in the same order you want your video to be
-const imagePattern = "./images/image%d.jpeg";
 
 async function main() {
-  isDirExists = fs.existsSync(path.join(__dirname, "/images"));
+  const isDirExists = fs.existsSync(path.join(__dirname, "/images"));
   if (!isDirExists) {
     fs.mkdirSync(path.join(__dirname, "/images"));
   }
-  const allImagesDownloaded = new Promise((resolve) => {
+  const allImagesDownloaded = await new Promise(async (resolve) => {
     for (let i = 0; i < 50; i++) {
-      (async () => {
-        await downloadImage(
-          images,
-          path.join(__dirname, "/images/", `image${i + 1}.jpeg`)
-        );
-      })();
+      await downloadImage(
+        images,
+        path.join(__dirname, "/images/", `image${i + 1}.jpeg`)
+      );
     }
     resolve(true);
   });
   if (allImagesDownloaded) {
+    const imagePattern = "./images/image%d.jpeg";
     createVideoFromImages(imagePattern, "./video.mp4", 30);
   }
 }
